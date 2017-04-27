@@ -42,7 +42,7 @@ Pode implementar em C, C++, Java, Scala ou Python. Caso use outra linguagem, con
 
 Se preocupe em criar códigos legíveis. A nota será atribuída de acordo com o que eu entender do código. Então, quanto mais claro o código estiver, melhor.
 
-# Pontuação
+## Pontuação
 Além disso, será avaliado: Relatório, pontualidade, Solução e Completude 
 
 O trabalho será avaliado em 5 dimensões: completude/corretude, pontualidade, qualidade do código, qualidade da solução e relatório. Os pesos de cada dimensão serão definidos posteriormente. Dentre os critérios, estão:
