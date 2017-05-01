@@ -5,6 +5,7 @@
  */
 package imdb.database.structures.skiplist;
 
+import imdb.database.Table;
 import imdb.database.structures.common.Entry;
 import java.util.Random;
 
@@ -12,40 +13,44 @@ import java.util.Random;
  *
  * @author Marcio Júnior
  */
-public class Node {
+public class Node implements Comparable {
 
-    Entry entry;
-    Node[] nodes;
+    private Entry entry;
+    private Node[] nodes;
+    private String key;
 
-    public Node(Entry newEntry, int size) {
+    public Node(Entry newEntry, int size,Table table) {
         this.entry = newEntry;
         double t = new Random().nextDouble();
         int i = 1;
         double j = 1;
-        while (i < Math.floor(Math.log(size) / 0.6931471805599453) && t <= 1 / j) { //0.6931471805599453 é log de 2 na base 10, essa operação dá o resultado de log de size na base 2
+        while (i <= Math.floor(Math.log(size) / 0.6931471805599453) && t <= 1 / j) { //0.6931471805599453 é log de 2 na base 10, essa operação dá o resultado de log de size na base 2
             j *= 2;
             i++;
         }
         this.nodes = new Node[i];
         for (int k = 0; k < nodes.length; k++) {
-            this.nodes[k] = this;
+            this.nodes[k] = null;
         }
-    }
-    
-    public void addMaximumReferences(int size){
-        Node[] newNodes = new Node[(int) Math.floor(Math.log(size) / 0.6931471805599453)];
-        for (int k = 0; k < nodes.length; k++) {
-            if (k < this.getNodes().length) {
-                newNodes[k] = this.getNodes()[k];
-            } else {
-                newNodes[k] = this;
-            }
-        }
-        this.nodes=newNodes;
+        this.key = table.getEntryKey(entry.getData());
     }
 
+    public void addLevels(int size) {
+        Node[] newNode = new Node[size];
+        for (int k = 0; k < nodes.length; k++) {
+            if (k < this.getNodes().length) {
+                newNode[k] = this.getNodes()[k];
+            }
+        }
+        this.nodes = newNode;
+    }
+
+    void setEntry(Entry entry) {
+        this.entry = entry;
+    }
+    
     public String getKey() {
-        return entry.getKey();
+        return key;
     }
 
     public int size() {
@@ -60,4 +65,27 @@ public class Node {
         return nodes;
     }
 
+    @Override
+    public int compareTo(Object o) {
+        if (o == null) {
+            return 0;
+        }
+        if (o instanceof Node) {
+            String comparable = (String) ((Node) o).getKey();
+            int compare= this.getKey().compareTo(comparable);
+            return compare;
+        }
+        return 0;
+    }
+    
+    @Override
+    public String toString(){
+        return this.getKey();
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    
 }

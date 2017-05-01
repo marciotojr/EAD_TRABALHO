@@ -5,16 +5,24 @@
  */
 package imdb.database.structures;
 
+import imdb.database.Table;
+import imdb.database.structures.common.Entry;
+
 /**
  *
  * @author Marcio Júnior
  */
 public abstract class Structure {
+    protected Table table;
+    
     public abstract boolean put(String[] entry);
     public abstract boolean remove(String key);
     public boolean remove(String[] entry){
         return this.remove(entry[0]);
     }
-    public abstract String[] search(String key);
+    public abstract Entry search(String key);
+    public void setTable(Table table){
+        this.table=table;
+    }
     
 }

@@ -5,35 +5,32 @@
  */
 package imdb.database.structures.common;
 
+import imdb.database.Table;
+
 /**
  *
  * @author Marcio Júnior
  */
 public class Entry {
 
-    String key;
-    String[] data;
+    private String[] data;
 
     public Entry(String[] entry) {
-        key = entry[0];
-        data = new String[entry.length - 1];
-        for (int i = 1; i < entry.length; i++) {
-            data[i-1]=entry[i];
+        data = new String[entry.length];
+        for (int i = 0; i < entry.length; i++) {
+            data[i] = entry[i];
         }
-    }
-
-    public String getKey() {
-        return key;
     }
 
     public String[] getData() {
         return data;
     }
-    
-    public String toString(){
-        String returnValue = "\""+this.key+"\" ";
-        for(String s:data){
-            returnValue+="\""+s+"\" ";
+
+    @Override
+    public String toString() {
+        String returnValue = "";
+        for (String s : data) {
+            returnValue += "\"" + s + "\" ";
         }
         return returnValue;
     }
