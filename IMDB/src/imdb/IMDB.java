@@ -9,6 +9,7 @@ import imdb.database.Database;
 import imdb.database.Table;
 import imdb.database.structures.common.Entry;
 import imdb.database.structures.skiplist.SkipList;
+import imdb.fileReader.FileImporter;
 import javafx.scene.control.TableCell;
 
 /**
@@ -61,6 +62,8 @@ public class IMDB {
         }
         Entry entry = table.search(search);
         return;*/
+ 
+ /*
         Database b = new Database();
         String[] camposT1 = {"datasrc_id", "authors", "title", "year", "journal"};
         Table t1 = new Table("data_src", camposT1);
@@ -69,6 +72,10 @@ public class IMDB {
         b.put("data_src", registroT1);
         String[] keys = {"D1066"};
         String[] s = b.search("data_src", keys);
+        return;*/
+        Database db = new Database();
+        FileImporter fi = new FileImporter(db);
+        fi.importFile("usda.sql");
         return;
     }
 

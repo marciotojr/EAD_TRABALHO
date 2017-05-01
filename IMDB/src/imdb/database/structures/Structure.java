@@ -25,4 +25,6 @@ public abstract class Structure {
         this.table=table;
     }
     
+    public abstract int getSize();
+    
 }

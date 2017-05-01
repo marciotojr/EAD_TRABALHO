@@ -93,4 +93,8 @@ public class Table {
     public boolean put(String[] entry){
         return structure.put(entry);
     }
+    
+    public String toString(){
+        return this.name + "  " + this.structure.getSize();
+    }
 }
