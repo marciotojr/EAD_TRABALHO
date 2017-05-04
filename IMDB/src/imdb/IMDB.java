@@ -5,12 +5,10 @@
  */
 package imdb;
 
+import analise.Analysis;
 import imdb.database.Database;
-import imdb.database.Table;
-import imdb.database.structures.common.Entry;
-import imdb.database.structures.skiplist.SkipList;
 import imdb.fileReader.FileImporter;
-import javafx.scene.control.TableCell;
+import imdb.database.*;
 
 /**
  *
@@ -48,20 +46,23 @@ public class IMDB {
         System.out.println(sum / iterations + " " + max);
          */
 
- /*
-
+ 
+/*
         String[] fields = {"id","nome","telefone"};
         String[][] input = {{"4","lice","132456789"},{"2","Mariana","132456789"},{"3","Tania","132456789"},{"4","Alice","132456789"}};
-        String[] keys = {"id","nome"};
+        String[] keys = {"id"};
         String[] search = {"4"};
         Table table = new Table("pessoa",fields);
         table.setKeys(keys);
         keys = table.getKeys();
+        Database db = new Database();
+        db.addTable(table);
+        
         for(String[] s:input){
-            table.put(s);
+            db.put("pessoa", s);
         }
-        Entry entry = table.search(search);
-        return;*/
+        String[] s = db.search("pessoa",search);
+        return;
  
  /*
         Database b = new Database();
@@ -73,9 +74,57 @@ public class IMDB {
         String[] keys = {"D1066"};
         String[] s = b.search("data_src", keys);
         return;*/
+ 
+ 
         Database db = new Database();
         FileImporter fi = new FileImporter(db);
         fi.importFile("usda.sql");
+        String[] key = {"44061" ,"208"};
+        db.search("nut_data", key);/*
+        Analysis analysis = new Analysis(db, "nut_data");
+        //int[] nodePerLevel = analysis.nodesPerLevel();
+        //double[] percentagePerLevel = analysis.percentagePerLevel();
+        /*String x = "";
+        String y = "";
+        for(int i = 10; i<analysis.getSize();i+=2000){
+            long v = analysis.insertionTime(i);
+            x+=i+",";
+            y+=v+",";
+        }
+        System.out.println(x);
+        System.out.println(y);*/
+        /*
+        String x = "";
+        String y = "";
+        for(int i = 100; i<analysis.getSize();i+=2500){
+            long sum =0;
+            for(int k=0;k<20;k++){
+                sum+= analysis.completeInsertionTime(i);
+            }
+            x+=i+",";
+            y+=(double)sum/(20000000)+",";
+            System.out.println(i+"\t"+(double)sum/(20000000));
+        }
+        System.out.println(x);
+        System.out.println(y);*/
+        /*
+        String x = "";
+        String y = "";
+        for(int i=500;i<analysis.getSize();i+=2500){
+            long sum =0;
+            for(int k=0;k<20;k++){
+                sum+= analysis.insertionTimePerItem(i);
+            }
+            x+=i+",";
+            y+=(double)sum/(20)+",";
+            System.out.println(i+"\t"+(double)sum/(20000000));
+        }
+        System.out.println(x);
+        System.out.println(y);*/
+        
+        //analysis.printSearchTimePerItem();
+        
+        
         return;
     }
 

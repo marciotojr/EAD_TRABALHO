@@ -22,9 +22,9 @@ public class Node implements Comparable {
     public Node(Entry newEntry, int size,Table table) {
         this.entry = newEntry;
         double t = new Random().nextDouble();
-        int i = 1;
+        int i = 0;
         double j = 1;
-        while (i <= Math.floor(Math.log(size) / 0.6931471805599453) && t <= 1 / j) { //0.6931471805599453 é log de 2 na base 10, essa operação dá o resultado de log de size na base 2
+        while (i <= Math.floor(Math.log(size) / 0.6931471805599453) && i < SkipList.getLimitHeight() && t < 1 / j) { //0.6931471805599453 é log de 2 na base 10, essa operação dá o resultado de log de size na base 2
             j *= 2;
             i++;
         }

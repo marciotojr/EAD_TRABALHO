@@ -5,7 +5,6 @@
  */
 package imdb.database.structures.skiplist;
 
-import imdb.database.Table;
 import imdb.database.structures.Structure;
 import imdb.database.structures.common.Entry;
 
@@ -15,52 +14,54 @@ import imdb.database.structures.common.Entry;
  */
 public class SkipList extends Structure {
 
-    Node head;
-    int size;
-    int currentHeight;
+    private Node head;
+    private int size;
+    private static final int maxHeight = 50;
 
     public SkipList() {
         size = 0;
-        currentHeight = 0;
         head = null;
         table = null;
     }
 
     private void put(Entry newEntry, String key) {
+        Node newNode = null;
         if (size == 0) {
-            Node newNode = new Node(newEntry, size, this.table);
+            newNode = new Node(newEntry, size, this.table);
             this.head = newNode;
             size++;
+            return;
         } else if (head.getKey().compareTo(key) > 0) { //se nova entrada fica no inicio, substitui-se o iniício, e reinsere o antigo início, size não é atualizado, pois a segunda chamada do método atualiza size
             Entry reinsertEntry = head.getEntry();
-            String reinsertkey = head.getKey();
             head.setEntry(newEntry);
             head.setKey(key);
-            this.put(reinsertEntry, reinsertkey);
-        } else {
-            Node newNode = new Node(newEntry, this.getSize(), this.table);
-            Node[] substitutes = new Node[newNode.getNodes().length];
-            if (newNode.getNodes().length > head.getNodes().length) {
-                head.addLevels(newNode.getNodes().length);
-            }
-            Node currentNode = head;
-            for (int i = head.getNodes().length - 1; i >= 0; i--) {
-                while (currentNode.getNodes()[i] != null && currentNode.getNodes()[i].getKey().compareTo(key) <= 0) {
-                    currentNode = currentNode.getNodes()[i];
-                }
-                if (i < substitutes.length) {
-                    substitutes[i] = currentNode;
-                }
-            }
-            if (substitutes[0].compareTo(newNode) == 0) {
-                return;
-            }
-            for (int i = 0; i < substitutes.length; i++) {
-                newNode.getNodes()[i] = substitutes[i].getNodes()[i];
-                substitutes[i].getNodes()[i] = newNode;
-            }
-            size++;
+            newNode = new Node(reinsertEntry, this.getSize(), this.table);
         }
+        if (newNode == null) {
+            newNode = new Node(newEntry, this.getSize(), this.table);
+        }
+        Node[] substitutes = new Node[newNode.getNodes().length];
+        if (newNode.getNodes().length > head.getNodes().length) {
+            head.addLevels(newNode.getNodes().length);
+        }
+        Node currentNode = head;
+        for (int i = head.getNodes().length - 1; i >= 0; i--) {
+            while (currentNode.getNodes()[i] != null && currentNode.getNodes()[i].getKey().compareTo(key) <= 0) {
+                currentNode = currentNode.getNodes()[i];
+            }
+            if (i < substitutes.length) {
+                substitutes[i] = currentNode;
+            }
+        }
+        if (substitutes[0].compareTo(newNode) == 0) {
+            return;
+        }
+        for (int i = 0; i < substitutes.length; i++) {
+            newNode.getNodes()[i] = substitutes[i].getNodes()[i];
+            substitutes[i].getNodes()[i] = newNode;
+        }
+        size++;
+
     }
 
     public Node getHead() {
@@ -69,10 +70,6 @@ public class SkipList extends Structure {
 
     public int getSize() {
         return size;
-    }
-
-    public int getCurrentHeight() {
-        return currentHeight;
     }
 
     public int getMaxHeight() {
@@ -109,5 +106,9 @@ public class SkipList extends Structure {
             return currentNode.getEntry();
         }
         return null;
+    }
+    
+    public static int getLimitHeight(){
+        return maxHeight;
     }
 }

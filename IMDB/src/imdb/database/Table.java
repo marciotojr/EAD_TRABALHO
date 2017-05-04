@@ -13,7 +13,7 @@ import imdb.database.structures.skiplist.SkipList;
  *
  * @author Marcio Júnior
  */
-public class Table {
+public class Table{
 
     String[] fields;
     boolean[] keys;
@@ -97,4 +97,10 @@ public class Table {
     public String toString(){
         return this.name + "  " + this.structure.getSize();
     }
+
+    public Structure getStructure() {
+        return structure;
+    }
+    
+    
 }

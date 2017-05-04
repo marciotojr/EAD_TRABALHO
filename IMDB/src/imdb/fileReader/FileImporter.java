@@ -106,7 +106,7 @@ public class FileImporter {
                 if (currentLine.contains("COPY")) {
                     String tableName = currentLine.trim().split(" ")[1];
                     while (((currentLine = br.readLine()) != null) && !currentLine.contains("\\.")) {
-                        System.out.println(currentLine);
+                        //System.out.println(currentLine);
                         String[] entry = currentLine.split("\t");
                         dataBase.put(tableName, entry);
                     }                   
