@@ -11,21 +11,29 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import static javax.script.ScriptEngine.FILENAME;
 
 /**
- *
+ * Classe responsável pela leitura e importação das tabelas do arquivo para a memória
  * @author Marcio Júnior
  */
 public class FileImporter {
 
-    Database dataBase;
-
-    public FileImporter(Database db) {
-        this.dataBase = db;
+    /**
+     * Importa informações do arquivo descrito por fileName para o banco de dados
+     * @param db banco de dados de destino
+     * @param fileName arquivo de origem
+     */
+    public static void importDatabase(Database db, String fileName) {
+        importTables(db,fileName);
+        importValues(db,fileName);
     }
 
-    private void importTables(String fileName) {
+    /**
+     * Importa informações da tabela do arquivo descrito por fileName para o banco de dados
+     * @param db banco de dados de destino
+     * @param fileName arquivo de origem
+     */
+    private static void importTables(Database dataBase,String fileName) {
         BufferedReader br = null;
         FileReader fr = null;
 
@@ -90,7 +98,12 @@ public class FileImporter {
 
     }
 
-    private void importValues(String fileName) {
+    /**
+     * Importa registros do arquivo descrito por fileName para o banco de dados
+     * @param db banco de dados de destino
+     * @param fileName arquivo de origem
+     */
+    private static void importValues(Database dataBase,String fileName) {
         BufferedReader br = null;
         FileReader fr = null;
 
@@ -139,8 +152,4 @@ public class FileImporter {
 
     }
 
-    public void importFile(String fileName){
-        this.importTables(fileName);
-        this.importValues(fileName);
-    }
 }

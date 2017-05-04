@@ -24,7 +24,6 @@ public abstract class Structure {
     public void setTable(Table table){
         this.table=table;
     }
-    
     public abstract int getSize();
     
 }
