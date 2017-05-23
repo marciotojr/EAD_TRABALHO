@@ -6,51 +6,48 @@
 package imdb.database.structures.skiplist;
 
 import imdb.database.Table;
-import imdb.database.structures.common.Entry;
+import imdb.database.structures.common.Set;
 import java.util.Random;
 
 /**
  * Classe dos nós da skiplist
+ *
  * @author Marcio Júnior
  */
-public class Node implements Comparable {
+public class SkipListNode extends Set implements Comparable {
 
-    /**
-     * Registro do nó
-     */
-    private Entry entry;
     /**
      * Lista de nós seguintes
      */
-    private Node[] nodes;
-    /**
-     * Chave de identificação única do registro no nó e do nó
-     */
-    private String key;
+    private SkipListNode[] nodes;
 
     /**
-     * Cria um nó para inserção com sua nova chave baseada na tabela onde será inserido
-     * @param newEntry campos do registro
+     * Cria um nó para inserção com sua nova chave baseada na tabela onde será
+     * inserido
+     *
+     * @param value campos do registro
      * @param table tabela onde o nó deve ser inserido
      */
-    Node(Entry newEntry, Table table) {
-        this.entry = newEntry;
+    SkipListNode(Comparable key, Object value, Table table) {
+        super(key,value);
         double t = new Random().nextDouble();
-        int i = 0;
+        int i = 1;
         double j = 1;
-        while (i <= Math.floor(Math.log(table.getStructure().getSize()) / 0.6931471805599453) && i < SkipList.getLimitHeight() && t < 1 / j) { //0.6931471805599453 é log de 2 na base 10, essa operação dá o resultado de log de size na base 2
+        int size = table.getStructure().getSize();
+        int max = (int) Math.floor(Math.log(table.getStructure().getSize()) / 0.6931471805599453);
+        while (i <= max && i < SkipList.getLimitHeight() && t < 1 / j) { //0.6931471805599453 é log de 2 na base 10, essa operação dá o resultado de log de size na base 2
             j *= 2;
             i++;
         }
-        this.nodes = new Node[i];
+        this.nodes = new SkipListNode[i];
         for (int k = 0; k < nodes.length; k++) {
             this.nodes[k] = null;
         }
-        this.key = table.getEntryKey(entry.getData());
+
     }
 
     public void addLevels(int size) {
-        Node[] newNode = new Node[size];
+        SkipListNode[] newNode = new SkipListNode[size];
         for (int k = 0; k < nodes.length; k++) {
             if (k < this.getNodes().length) {
                 newNode[k] = this.getNodes()[k];
@@ -59,23 +56,19 @@ public class Node implements Comparable {
         this.nodes = newNode;
     }
 
-    void setEntry(Entry entry) {
-        this.entry = entry;
-    }
-    
-    public String getKey() {
+    public Comparable getKey() {
         return key;
     }
 
+    public Object getValue() {
+        return value;
+    }
+ 
     public int size() {
         return this.nodes.length;
     }
 
-    public Entry getEntry() {
-        return entry;
-    }
-
-    public Node[] getNodes() {
+    public SkipListNode[] getNodes() {
         return nodes;
     }
 
@@ -84,22 +77,21 @@ public class Node implements Comparable {
         if (o == null) {
             return 0;
         }
-        if (o instanceof Node) {
-            String comparable = (String) ((Node) o).getKey();
-            int compare= this.getKey().compareTo(comparable);
+        if (o instanceof SkipListNode) {
+            Comparable key = ((SkipListNode) o).getKey();
+            int compare = this.getKey().compareTo(key);
             return compare;
         }
         return 0;
     }
-    
+
     @Override
-    public String toString(){
-        return this.getKey();
+    public String toString() {
+        return (String)this.getKey();
     }
 
     public void setKey(String key) {
         this.key = key;
     }
 
-    
 }

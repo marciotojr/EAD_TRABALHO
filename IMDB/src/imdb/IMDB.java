@@ -6,6 +6,8 @@
 package imdb;
 
 import imdb.database.Database;
+import imdb.database.structures.binarySearchTree.BinarySearchTree;
+import imdb.database.structures.binarySearchTree.BinarySearchTreeNode;
 import imdb.fileReader.FileImporter;
 
 /**
@@ -20,8 +22,9 @@ public class IMDB {
     public static void main(String[] args) { 
         Database db = new Database();
         FileImporter.importDatabase(db,"usda.sql");
+        System.gc();
         String[] key = {"44061" ,"208"};
-        db.search("nut_data", key);      
+        String[] entry = db.search("nut_data", key);
         return;
     }
 

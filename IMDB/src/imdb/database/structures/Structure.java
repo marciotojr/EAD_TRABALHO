@@ -6,24 +6,31 @@
 package imdb.database.structures;
 
 import imdb.database.Table;
-import imdb.database.structures.common.Entry;
 
 /**
  *
  * @author Marcio Júnior
  */
-public abstract class Structure {
+public abstract class Structure <E> {
     protected Table table;
-    
-    public abstract boolean put(String[] entry);
-    public abstract boolean remove(String key);
-    public boolean remove(String[] entry){
-        return this.remove(entry[0]);
+    protected int size;
+
+    public Structure(Table table) {
+        this.table = table;
+        this.size = 0;
     }
-    public abstract Entry search(String key);
+    
+    
+    
+    public abstract boolean put(E entry);
+    public abstract boolean remove(Comparable key);
+    public abstract boolean remove(E entry);
+    public abstract E search(Comparable key);
     public void setTable(Table table){
         this.table=table;
     }
-    public abstract int getSize();
+    public int getSize(){
+        return size;
+    }
     
 }

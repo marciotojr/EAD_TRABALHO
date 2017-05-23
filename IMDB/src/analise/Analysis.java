@@ -8,7 +8,7 @@ package analise;
 import imdb.database.Database;
 import imdb.database.Table;
 import imdb.database.structures.common.Entry;
-import imdb.database.structures.skiplist.Node;
+import imdb.database.structures.skiplist.SkipListNode;
 import imdb.database.structures.skiplist.SkipList;
 import java.util.Random;
 
@@ -28,13 +28,13 @@ public class Analysis {
         database = db;
         table = database.getTable(tableName);
         skiplist = (SkipList) table.getStructure();
-        Node head = skiplist.getHead().getNodes()[0];
+        SkipListNode head = skiplist.getHead().getNodes()[0];
         entries = new Entry[skiplist.getSize() - 1];
         keys = new String[skiplist.getSize() - 1];
         for (int i = 0; head != null; head = head.getNodes()[0]) {
-            if (head.getEntry() != null) {
-                entries[i] = head.getEntry();
-                keys[i] = head.getKey();
+            if (head.getValue()!= null) {
+                entries[i] = (Entry)head.getValue();
+                keys[i] = (String)head.getKey();
                 i++;
             }
         }
@@ -46,7 +46,7 @@ public class Analysis {
             returnValue[i] = 0;
         }
 
-        for (Node head = skiplist.getHead().getNodes()[0]; head != null; head = head.getNodes()[0]) {
+        for (SkipListNode head = skiplist.getHead().getNodes()[0]; head != null; head = head.getNodes()[0]) {
             returnValue[head.getNodes().length - 1]++;
         }
 
@@ -65,8 +65,8 @@ public class Analysis {
 
     public long completeInsertionTime(int limit) {
         long insertionTime = System.nanoTime();
-        SkipList sl = new SkipList();
         Table newTable = new Table("temporary", table.getKeys());
+        SkipList sl = new SkipList(newTable);
         sl.setTable(newTable);
         for (int i = 0; i < entries.length && i < limit; i++) {
             sl.put(entries[i].getData());
@@ -92,8 +92,8 @@ public class Analysis {
 
     public long insertionTimePerItem(int limit) {
         Random r = new Random();
-        SkipList sl = new SkipList();
         Table newTable = new Table("temporary", table.getKeys());
+        SkipList sl = new SkipList(newTable);
         sl.setTable(newTable);
         int item = r.nextInt(limit);
         for (int i = 0; i < item; i++) {
@@ -129,13 +129,13 @@ public class Analysis {
 
     public int getSpace(int limit) {
         int space = 0;
-        SkipList sl = new SkipList();
         Table newTable = new Table("temporary", table.getKeys());
+        SkipList sl = new SkipList(newTable);
         sl.setTable(newTable);
         for (int i = 0; i < entries.length && i < limit; i++) {
             sl.put(entries[i].getData());
         }
-        for (Node head = sl.getHead(); head != null; head = head.getNodes()[0]) {
+        for (SkipListNode head = sl.getHead(); head != null; head = head.getNodes()[0]) {
             space += head.getNodes().length;
         }
         return space;
@@ -171,8 +171,8 @@ public class Analysis {
         String y = "";
 
         for (int i = 500; i < this.getSize(); i += 2500) {
-            SkipList sl = new SkipList();
             Table newTable = new Table("temporary", table.getKeys());
+            SkipList sl = new SkipList(newTable);
             sl.setTable(newTable);
             for (int k = 0; k < entries.length && k < i; k++) {
                 sl.put(entries[k].getData());

@@ -6,27 +6,35 @@
 package imdb.database;
 
 import imdb.database.structures.Structure;
+import imdb.database.structures.binarySearchTree.avlTree.AVLTree;
+import imdb.database.structures.chainedList.EntryChainedList;
 import imdb.database.structures.common.Entry;
+import imdb.database.structures.common.Key;
+import imdb.database.structures.common.Set;
 import imdb.database.structures.skiplist.SkipList;
 
 /**
  * Classe que define métodos e atributos da tabela
+ *
  * @author Marcio Júnior
  */
-public class Table{
+public class Table {
 
     /**
      * Lista de campos da tabela
      */
     private final String[] fields;
+    private final String[] foreignKeyTable;
+    private final String[] foreignKeyField;
     /**
-     * Lista que indica se o campo em fields[i] faz parte da chave primária ou não
+     * Lista que indica se o campo em fields[i] faz parte da chave primária ou
+     * não
      */
     private final boolean[] keys;
     /**
      * Estrutura onde serão armazenados os registros
      */
-    private final Structure structure;
+    private final Structure<Entry> structure;
     /**
      * Nome da tabela
      */
@@ -34,28 +42,34 @@ public class Table{
     /**
      * Símbolo separador das chaves na concatenação
      */
-    private static final char SEPARATOR = (char)13;
+    private static final char SEPARATOR = (char) 13;
 
     /**
      * Inicializador da tabela e da estrutura da tabela
+     *
      * @param name nome da tabela
      * @param newFields lista de campos da tabela
      */
     public Table(String name, String[] newFields) {
         this.fields = newFields;
+        this.foreignKeyField = new String[this.fields.length];
+        this.foreignKeyTable = new String[this.fields.length];
         this.keys = new boolean[this.fields.length];
         for (int i = 0; i < this.fields.length; i++) {
             keys[i] = false;
+            foreignKeyTable[i] = "";
+            foreignKeyField[i] = "";
         }
         keys[0] = true;
-        structure = new SkipList();
+        structure = new SkipList<>(this);
         this.name = name;
-        structure.setTable(this);
     }
 
     /**
      * Identifica campos que formam a chave primária da tabela
-     * @param keys lista que indica se o campo em fields[i] faz parte da chave primária ou não
+     *
+     * @param keys lista que indica se o campo em fields[i] faz parte da chave
+     * primária ou não
      */
     void setKeys(String[] keys) {
         for (int i = 0; i < this.fields.length; i++) {
@@ -72,6 +86,7 @@ public class Table{
 
     /**
      * Retorna um vetor de Strings que fazem parte da chave primária
+     *
      * @return vetor de Strings que fazem parte da chave primária
      */
     public String[] getKeys() {
@@ -94,21 +109,36 @@ public class Table{
 
     /**
      * Retorna a chave de um registro na tabela atual
+     *
      * @param entry registro a ter sua chave calculada
      * @return chave de um registro na tabela atual
      */
-    public String getEntryKey(String[] entry) {
+    public Comparable getEntryKey(Object value) {
+        Comparable key = "";
+        if (value instanceof Entry) {
+            for (int i = 0; i < this.fields.length; i++) {
+                if (this.keys[i]) {
+                    key += ((Entry) value).getData()[i] + SEPARATOR;
+                }
+            }
+            key = new Key((String)key);
+        }
+        return key;
+    }
+
+    public void setEntryKey(String[] entry, Set node) {
         String key = "";
         for (int i = 0; i < this.fields.length; i++) {
             if (this.keys[i]) {
                 key += entry[i] + SEPARATOR;
             }
         }
-        return key;
+        node.setKey(key);
     }
 
     /**
      * Retona o nome da tabela
+     *
      * @return nome da tabela
      */
     String getName() {
@@ -116,43 +146,48 @@ public class Table{
     }
 
     /**
-     * Busca um registro com chave igual à chave gerada pelo conjunto de valores passado como parametro
+     * Busca um registro com chave igual à chave gerada pelo conjunto de valores
+     * passado como parametro
+     *
      * @param keys valores da chave do nó
      * @return registro que corresponde às chaves passadas por parâmetro
      */
     public Entry search(String[] keys) {
-        String key = "";
+        String concatKey = "";
         for (String s : keys) {
-            key += s + SEPARATOR;
+            concatKey += s + SEPARATOR;
         }
-        return structure.search(key);
+        Key key = new Key(concatKey);
+        return (Entry) structure.search(key);
     }
-    
+
     /**
      * Insere o registro na tabela
+     *
      * @param entry registro a ser inserido
      * @return verdadeiro se o registro foi inserido, falso caso contrário
      */
-    public boolean put(String[] entry){
-        return structure.put(entry);
+    public boolean put(String[] entry) {
+        return structure.put(new Entry(entry));
     }
-    
+
     /**
      * Retorna informações basicas da tabela
+     *
      * @return nome e numero de registro da tabela
      */
     @Override
-    public String toString(){
+    public String toString() {
         return this.name + "  " + this.structure.getSize();
     }
 
     /**
      * Retorna a estrutura usada pela tabela
+     *
      * @return estrutura usada pela tabela
      */
     public Structure getStructure() {
         return structure;
     }
-    
-    
+
 }
