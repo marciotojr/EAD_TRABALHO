@@ -26,6 +26,12 @@ public class AVLTree<E> extends DatabaseStructure {
         root = null;
     }
 
+    public AVLNode getRoot() {
+        return root;
+    }
+    
+    
+
     public void insert(E value) {
         root = insert(value, root);
     }
@@ -61,7 +67,7 @@ public class AVLTree<E> extends DatabaseStructure {
                 return node;
             } else {
                 BinarySearchTreeNode leafNode = node;
-                boolean balance = height((AVLNode) node.getLeft()) < height((AVLNode) node.getRight());
+                boolean balance = height((AVLNode) node.getLeft()) > height((AVLNode) node.getRight());
                 if (balance) {
                     leafNode = leafNode.getLeft();
                     while (leafNode.getRight() != null) {
@@ -208,7 +214,8 @@ public class AVLTree<E> extends DatabaseStructure {
 
     @Override
     public boolean remove(Object entry) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.removeNode(table.getEntryKey(entry), root);
+        return true;
     }
 
     @Override
@@ -247,8 +254,8 @@ public class AVLTree<E> extends DatabaseStructure {
         AVLNode current;
         while ((current = stack.pop()) != null) {
             list.add(current.getValue());
-            stack.push((AVLNode) root.getLeft());
-            stack.push((AVLNode) root.getRight());
+            stack.push((AVLNode) current.getLeft());
+            stack.push((AVLNode) current.getRight());
         }
         return list.toArray();
     }

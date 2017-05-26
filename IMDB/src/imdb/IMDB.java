@@ -5,10 +5,12 @@
  */
 package imdb;
 
+import analysis.AVLAnalysis;
 import analysis.Analysis;
 import analysis.SkipListAnalysis;
 import imdb.database.Database;
 import imdb.database.Table;
+import imdb.database.structures.binarySearchTree.avlTree.AVLNode;
 import imdb.database.structures.chainedList.Stack;
 import imdb.fileReader.FileImporter;
 import java.util.Scanner;
@@ -25,7 +27,9 @@ public class IMDB {
      */
     public static void main(String[] args) {
         Database db = new Database();
-        FileImporter.importDatabase(db, "usda.sql");/*
+        FileImporter.importDatabase(db, "usda.sql");
+        Table t1 = db.getTable("footnote");
+        Table t2 = db.getTable("nutr_def");
         boolean repeat = true;
         while (repeat) {
             System.out.println("\nSelecione qual operação deseja realizar:");
@@ -71,11 +75,7 @@ public class IMDB {
                 default:
                     repeat = true;
             }
-        }*/
-        Analysis ana = new SkipListAnalysis(db, "deriv_cd", "nut_data");
-        //ana.leftJoin();
-        ana.rightJoin();
-        //ana.innerJoin();
+        }
         return;
     }
 

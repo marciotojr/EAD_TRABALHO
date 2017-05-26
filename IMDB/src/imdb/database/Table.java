@@ -62,7 +62,7 @@ public class Table {
             foreignKeyField[i] = "";
         }
         keys[0] = true;
-        structure = new SkipList(this);
+        structure = new AVLTree<>(this);
         this.name = name;
     }
 
@@ -124,14 +124,14 @@ public class Table {
             }
             key = new Key((String) key);
         } else if (value instanceof String[]) {
-            if (((String[]) value).length < this.fields.length) {
+            if (((String[]) value).length == this.getKeys().length) {
                 for (String s : (String[]) value) {
                     key += s + SEPARATOR;
                 }
             } else {
                 for (int i = 0; i < this.fields.length; i++) {
                     if (this.keys[i]) {
-                        key += ((Entry) value).getData()[i] + SEPARATOR;
+                        key += ((String[])value)[i] + SEPARATOR;
                     }
                 }
             }

@@ -43,7 +43,7 @@ public class Analysis {
                 aux1.put(((Entry) entry1[j]).getData());
             }
             long total = 0;
-            int iterations=200;
+            int iterations=10;
             for (int j = 0; j < iterations; j++) {
                 long insertionTime = System.nanoTime();
                 aux1.leftJoin(table2);
@@ -79,7 +79,7 @@ public class Analysis {
                 aux1.put(((Entry) entry1[j]).getData());
             }
             long total = 0;
-            int iterations=200;
+            int iterations=10;
             for (int j = 0; j < iterations; j++) {
                 long insertionTime = System.nanoTime();
                 aux1.innerJoin(table2);

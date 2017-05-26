@@ -13,10 +13,12 @@ import imdb.database.structures.skiplist.SkipListNode;
 import imdb.database.structures.skiplist.SkipList;
 import java.util.Random;
 
+
 /**
  *
  * @author Marcio Júnior
  */
+@Deprecated
 public class SkipListAnalysis extends Analysis{
 
     Entry[] entries1;
@@ -68,8 +70,8 @@ public class SkipListAnalysis extends Analysis{
 
     public long completeInsertionTime(int limit) {
         long insertionTime = System.nanoTime();
-        Table newTable = new Table("temporary", table1.getKeys());
-        SkipList sl = new SkipList(newTable);
+        Table newTable = TableFactory.getInstance().cloneTableWOValues(table1, table1.getName()+" ");
+        SkipList sl = (SkipList)newTable.getStructure();
         sl.setTable(newTable);
         for (int i = 0; i < entries1.length && i < limit; i++) {
             sl.put(entries1[i].getData());
@@ -80,23 +82,20 @@ public class SkipListAnalysis extends Analysis{
     public void printCompleteInsertionTime() {
         String x = "";
         String y = "";
-        for (int i = 100; i < this.getSize(); i += 2500) {
+        for (int i = 100; i < this.getSize(); i += this.getSize()/30) {
             long sum = 0;
-            for (int k = 0; k < 20; k++) {
+            int iterations = 10;
+            for (int k = 0; k < iterations; k++) {
                 sum += this.completeInsertionTime(i);
             }
-            x += i + ",";
-            y += (double) sum / (20000000) + ",";
-            System.out.println(i + "\t" + (double) sum / (20000000));
+            System.out.println(i + "\t" + (double) sum / (iterations*1000000));
         }
-        System.out.println(x);
-        System.out.println(y);
     }
 
     public long insertionTimePerItem(int limit) {
         Random r = new Random();
-        Table newTable = new Table("temporary", table1.getKeys());
-        SkipList sl = new SkipList(newTable);
+        Table newTable = TableFactory.getInstance().cloneTableWOValues(table1, table1.getName()+" ");
+        SkipList sl = (SkipList)newTable.getStructure();
         sl.setTable(newTable);
         int item = r.nextInt(limit);
         for (int i = 0; i < item; i++) {
@@ -117,14 +116,13 @@ public class SkipListAnalysis extends Analysis{
     public void printInsertionTimePerItem() {
         String x = "";
         String y = "";
-        for (int i = 500; i < this.getSize(); i += 2500) {
+        for (int i = 500; i < this.getSize(); i += this.getSize()/30) {
             long sum = 0;
-            for (int k = 0; k < 20; k++) {
+            int iterations=3;
+            for (int k = 0; k < iterations; k++) {
                 sum += this.insertionTimePerItem(i);
             }
-            x += i + ",";
-            y += (double) sum / (20) + ",";
-            System.out.println(i + "\t" + (double) sum / (20000000));
+            System.out.println(i + "\t" + (double) sum / (iterations));
         }
         System.out.println(x);
         System.out.println(y);
@@ -132,8 +130,8 @@ public class SkipListAnalysis extends Analysis{
 
     public int getSpace(int limit) {
         int space = 0;
-        Table newTable = new Table("temporary", table1.getKeys());
-        SkipList sl = new SkipList(newTable);
+        Table newTable = TableFactory.getInstance().cloneTableWOValues(table1, table1.getName()+" ");
+        SkipList sl = (SkipList)newTable.getStructure();
         sl.setTable(newTable);
         for (int i = 0; i < entries1.length && i < limit; i++) {
             sl.put(entries1[i].getData());
@@ -149,10 +147,10 @@ public class SkipListAnalysis extends Analysis{
         String y = "";
         for (int i = 500; i < this.getSize(); i += 2500) {
             int space = 0;
-            for (int k = 0; k < 20; k++) {
+            //for (int k = 0; k < 20; k++) {
                 space += getSpace(i);
-            }
-            space /= 20;
+            //}
+            //space /= 20;
             x += i + ",";
             y += space + ",";
             System.out.println(i + "\t" + space);
@@ -195,6 +193,21 @@ public class SkipListAnalysis extends Analysis{
             x += i + ",";
             y += (double) sum / (20000000) + ",";
             System.out.println(i + "\t" + (double) sum / (20000000));
+        }
+        System.out.println(x);
+        System.out.println(y);
+    }
+
+    public void printRemoveTime() {
+       String x = "";
+        String y = "";
+        for (int i = 500; i < this.getSize(); i += this.getSize()/30) {
+            long sum = 0;
+            int iterations=3;
+            for (int k = 0; k < iterations; k++) {
+                sum += this.removeTimePerItem(i,this.skiplist);
+            }
+            System.out.println(i + "\t" + (double) sum / (iterations));
         }
         System.out.println(x);
         System.out.println(y);
