@@ -9,12 +9,12 @@ package imdb.database.structures.chainedList;
  *
  * @author Marcio Júnior
  */
-class Node<E>{
+public class SingleLinkedNode<E>{
 
     E value;
-    Node next;
+    SingleLinkedNode next;
     
-    public Node(E value) {
+    public SingleLinkedNode(E value) {
         this.value = value;
         this.next = null;
     }
@@ -23,11 +23,11 @@ class Node<E>{
         return value;
     }
 
-    public Node getNext() {
+    public SingleLinkedNode getNext() {
         return next;
     }
 
-    public void setNext(Node next) {
+    public void setNext(SingleLinkedNode next) {
         this.next = next;
     }
 

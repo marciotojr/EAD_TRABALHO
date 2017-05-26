@@ -9,21 +9,27 @@ package imdb.database.structures.chainedList;
  *
  * @author Marcio Júnior
  */
-public class Stack<E> {
+public class Queue<E> {
 
-    public SingleLinkedNode head;
+    DoubleLinkedNode<E> head, tail;
     int size;
 
-    public Stack() {
+    public Queue() {
         head = null;
+        tail = null;
         size = 0;
     }
 
     public void push(E value) {
         if (value != null) {
-            SingleLinkedNode newNode = new SingleLinkedNode(value);
-            newNode.setNext(head);
-            head = newNode;
+            DoubleLinkedNode<E> node = new DoubleLinkedNode<>(value);
+            if (head == null && tail == null) {
+                head = tail = node;
+            } else {
+                tail.setNext(node);
+                tail.getNext().setPrevious(tail);
+                tail = tail.getNext();
+            }
             size++;
         }
     }
@@ -32,26 +38,18 @@ public class Stack<E> {
         if (head == null) {
             return null;
         }
-        SingleLinkedNode returnValue = head;
+        E value = head.value;
         head = head.getNext();
-        returnValue.setNext(null);
+        if (head != null) {
+            head.setPrevious(null);
+        } else {
+            tail = null;
+        }
         size--;
-        return (E) returnValue.getValue();
+        return value;
     }
 
     public int getSize() {
         return size;
-    }
-    
-    public E[] toArray(){
-        Object[] arr = new Object[size];
-        SingleLinkedNode node = head;
-        int i=0;
-        while(node!=null){
-            arr[i]=node.getValue();
-            node=node.getNext();
-            i++;
-        }
-        return (E[]) arr;
     }
 }

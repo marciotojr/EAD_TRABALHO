@@ -1,18 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package imdb.database.structures.skiplist;
 
 import imdb.database.Table;
-import imdb.database.structures.Structure;
+import imdb.database.structures.DatabaseStructure;
+import imdb.database.structures.auxiliarTree.JoinTree;
+import imdb.database.structures.chainedList.Queue;
+import imdb.database.structures.chainedList.Stack;
+import imdb.database.structures.common.Entry;
+import imdb.database.structures.common.Set;
 
 /**
  * Classe que define os atributos da skiplist
+ *
  * @author Marcio Júnior
+ * @param <E>
  */
-public class SkipList<E> extends Structure {
+public class SkipList<E> extends DatabaseStructure {
 
     /**
      * Primeiro nó da skiplist
@@ -26,6 +28,7 @@ public class SkipList<E> extends Structure {
 
     /**
      * Inicializador da skiplist
+     *
      * @param table Tabela cujas entradas a skiplist guarda
      */
     public SkipList(Table table) {
@@ -37,6 +40,7 @@ public class SkipList<E> extends Structure {
 
     /**
      * Insere um registro na posição refernciada pela chave
+     *
      * @param value Valores do registro a ser inserido
      * @return verdadeiro se o novo valor foi inserido, falso caso contrário
      */
@@ -51,7 +55,7 @@ public class SkipList<E> extends Structure {
         } else if (head.getKey().compareTo(key) > 0) { //se nova entrada fica no inicio, substitui-se o iniício, e reinsere o antigo início
             Object reinsertEntry = head.getValue();
             head.setValue(value);
-            head.setKey(key);
+            head.setKey(table.getEntryKey(value));
             newNode = new SkipListNode(table.getEntryKey(reinsertEntry), reinsertEntry, this.table);//reinsere o antigo inicio como se fosse o novo nó
         }
         if (newNode == null) {
@@ -80,14 +84,47 @@ public class SkipList<E> extends Structure {
         size++;
         return true;
     }
-    
+
     @Override
     public boolean remove(Comparable key) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (size == 0) {//cria o primeiro nó da lista
+            return false;
+        } else if ((head.getKey().compareTo(key) > 0)) {
+            return false;
+        } else if (head.getKey().compareTo(key) == 0) { //se nova entrada fica no inicio, substitui-se o iniício, e reinsere o antigo início
+            head.setKey(head.getNodes()[0].getKey());
+            head.setValue((E)head.getNodes()[0].getValue());
+            for (int i = head.getNodes()[0].getNodes().length-1; i>=0; i--) {
+                head.getNodes()[i] = head.getNodes()[0].getNodes()[i];
+            }
+            size--;
+            return true;
+        }
+        SkipListNode[] substitutes = new SkipListNode[head.getNodes().length];//lista de nós que referenciarão para o novo nó
+        SkipListNode currentNode = head;
+        for (int i = head.getNodes().length - 1; i >= 0; i--) {//caminha na skiplist
+            while (currentNode.getNodes()[i] != null && currentNode.getNodes()[i].getKey().compareTo(key) <= 0) {
+                currentNode = currentNode.getNodes()[i];
+            }
+            if (i < substitutes.length) {
+                substitutes[i] = currentNode;
+            }
+        }
+        currentNode=currentNode.getNodes()[0];
+        if (substitutes[0].compareTo(key) == 0) {
+            for (int i = substitutes[0].getNodes().length-1; i >=0 ; i--) {//rearranjo de referências
+                substitutes[i].getNodes()[i]=substitutes[i].getNodes()[i].getNodes()[i];
+            }
+        } else {
+            return false;
+        }
+
+        return false;
     }
 
     /**
      * Procura um registro com chave igual à chave passada por parâmetro
+     *
      * @param key chave de busca
      * @return registro com chave igual à chave passada por parâmetro
      */
@@ -110,17 +147,19 @@ public class SkipList<E> extends Structure {
         }
         return null;
     }
-    
+
     /**
      * Retorna o limite superior do número de referências que um nó faz a outros
+     *
      * @return o limite superior do número de referências que um nó faz a outros
      */
-    public static int getLimitHeight(){
+    public static int getLimitHeight() {
         return MAXHEIGHT;
     }
 
     /**
      * Retorna o primeiro nó da skiplist
+     *
      * @return primeiro nó da skiplist
      */
     public SkipListNode getHead() {
@@ -129,8 +168,66 @@ public class SkipList<E> extends Structure {
 
     @Override
     public boolean remove(Object key) {
-        return this.remove((Comparable)key);
+        return this.remove((Comparable) key);
     }
-    
-    
+
+    @Override
+    public Object[] getValuesArray() {
+        Object[] list = new Object[size];
+        int i = 0;
+        SkipListNode node = head;
+        while (node != null) {
+            list[i] = node.getValue();
+            i++;
+            node = node.getNodes()[0];
+        }
+        return list;
+    }
+
+    @Override
+    public Stack getValuesStack() {
+        Stack<E> list = new Stack();
+        int i = 0;
+        SkipListNode node = head;
+        while (node != null) {
+            list.push((E) node.getValue());
+            i++;
+            node = node.getNodes()[0];
+        }
+        return list;
+    }
+
+    @Override
+    public int getSize() {
+        return this.size;
+    }
+
+    @Override
+    public JoinTree buildJoinTree(int leftSize) {
+        JoinTree<Set> tree = new JoinTree(table, leftSize);
+        for (int i = this.head.getNodes().length - 1; i > 0; i--) {
+            Queue<SkipListNode> queue = new Queue();
+            queue.push(this.head);
+            SkipListNode node;
+            while ((node = queue.pop()) != null) {
+                Set set = (Set) node;
+                tree.insert(set);
+                queue.push(node.getNodes()[i]);
+            }
+        }
+        return tree;
+    }
+
+    @Override
+    public int count(int field, String value) {
+        int count = 0;
+        SkipListNode node = this.head;
+        while (node != null) {
+            if (((Entry) node.getValue()).getData()[field].equals(node)) {
+                count++;
+            }
+            node = node.getNodes()[0];
+        }
+        return count;
+    }
 }

@@ -23,6 +23,7 @@ public class Key implements Comparable<Object> {
     
     @Override
     public int compareTo(Object o) {
+        if(o==null)return -1;
         if(o instanceof Key){
             Key auxKey = (Key)o;
             if(this.hash!=auxKey.hash){
@@ -37,5 +38,11 @@ public class Key implements Comparable<Object> {
     public String toString(){
         return hash+"||"+key;
     }
+
+    public String getKey() {
+        return key;
+    }
+    
+    
     
 }

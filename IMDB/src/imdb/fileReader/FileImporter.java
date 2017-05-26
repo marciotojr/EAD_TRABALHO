@@ -13,27 +13,36 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Classe responsável pela leitura e importação das tabelas do arquivo para a memória
+ * Classe responsável pela leitura e importação das tabelas do arquivo para a
+ * memória
+ *
  * @author Marcio Júnior
  */
 public class FileImporter {
 
     /**
-     * Importa informações do arquivo descrito por fileName para o banco de dados
+     * Importa informações do arquivo descrito por fileName para o banco de
+     * dados
+     *
      * @param db banco de dados de destino
      * @param fileName arquivo de origem
      */
     public static void importDatabase(Database db, String fileName) {
-        importTables(db,fileName);
-        importValues(db,fileName);
+        System.out.println("Importando arquivo: "+fileName);
+        importTables(db, fileName);
+        importValues(db, fileName);
+        System.gc();
+        System.out.println("Arquivo Importado");
     }
 
     /**
-     * Importa informações da tabela do arquivo descrito por fileName para o banco de dados
+     * Importa informações da tabela do arquivo descrito por fileName para o
+     * banco de dados
+     *
      * @param db banco de dados de destino
      * @param fileName arquivo de origem
      */
-    private static void importTables(Database dataBase,String fileName) {
+    private static void importTables(Database dataBase, String fileName) {
         BufferedReader br = null;
         FileReader fr = null;
 
@@ -68,6 +77,22 @@ public class FileImporter {
                             keys[i] = keys[i].trim();
                         }
                         dataBase.setKeys(tableName, keys);
+                    } else if (currentLine.contains("FOREIGN KEY")) {
+                        String[] fk = currentLine.substring(currentLine.indexOf('(')+1, currentLine.indexOf(')')).split(",");
+                        for(int i=0;i<fk.length;i++){
+                            fk[i] = fk[i].trim();
+                        }
+                        String[] pk = currentLine.substring(currentLine.lastIndexOf('(')+1, currentLine.lastIndexOf(')')).split(",");
+                        for(int i=0;i<fk.length;i++){
+                            pk[i] = pk[i].trim();
+                        }
+                        int begin=currentLine.indexOf("REFERENCES");
+                        int end=currentLine.lastIndexOf('(');
+                        String table = currentLine.substring(currentLine.indexOf(' ', begin), end);
+                        table = table.trim();
+                        dataBase.getTable(tableName).insertForeignKeys(table, fk);
+                        /*ALTER TABLE ONLY nut_data
+                        ADD CONSTRAINT nut_data_src_cd_fkey FOREIGN KEY (src_cd) REFERENCES src_cd(src_cd);*/
                     }
                 }
             }
@@ -100,10 +125,11 @@ public class FileImporter {
 
     /**
      * Importa registros do arquivo descrito por fileName para o banco de dados
+     *
      * @param db banco de dados de destino
      * @param fileName arquivo de origem
      */
-    private static void importValues(Database dataBase,String fileName) {
+    private static void importValues(Database dataBase, String fileName) {
         BufferedReader br = null;
         FileReader fr = null;
 
@@ -122,7 +148,7 @@ public class FileImporter {
                         //System.out.println(currentLine);
                         String[] entry = currentLine.split("\t");
                         dataBase.put(tableName, entry);
-                    }                   
+                    }
                 }
             }
 

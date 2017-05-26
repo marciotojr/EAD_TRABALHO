@@ -55,14 +55,6 @@ public class SkipListNode extends Set implements Comparable {
         }
         this.nodes = newNode;
     }
-
-    public Comparable getKey() {
-        return key;
-    }
-
-    public Object getValue() {
-        return value;
-    }
  
     public int size() {
         return this.nodes.length;
@@ -84,14 +76,4 @@ public class SkipListNode extends Set implements Comparable {
         }
         return 0;
     }
-
-    @Override
-    public String toString() {
-        return (String)this.getKey();
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
 }

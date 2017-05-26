@@ -13,7 +13,7 @@ import imdb.database.structures.binarySearchTree.BinarySearchTreeNode;
  */
 public class AVLNode extends BinarySearchTreeNode {
 
-    int height;
+    private int height;
 
     public AVLNode(Comparable key, Object value) {
         super(key, value);
@@ -27,7 +27,5 @@ public class AVLNode extends BinarySearchTreeNode {
     public void setHeight(int height) {
         this.height = height;
     }
-    
-    
-
+   
 }

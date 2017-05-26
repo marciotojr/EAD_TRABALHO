@@ -35,5 +35,8 @@ public class Set<E> {
         this.value = value;
     }
     
+    public String toString(){
+        return key.toString();
+    }
     
 }

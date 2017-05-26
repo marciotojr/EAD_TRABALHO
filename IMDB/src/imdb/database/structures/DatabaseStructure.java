@@ -6,16 +6,18 @@
 package imdb.database.structures;
 
 import imdb.database.Table;
+import imdb.database.structures.auxiliarTree.JoinTree;
+import imdb.database.structures.chainedList.Stack;
 
 /**
  *
  * @author Marcio Júnior
  */
-public abstract class Structure <E> {
+public abstract class DatabaseStructure <E> {
     protected Table table;
     protected int size;
 
-    public Structure(Table table) {
+    public DatabaseStructure(Table table) {
         this.table = table;
         this.size = 0;
     }
@@ -32,5 +34,10 @@ public abstract class Structure <E> {
     public int getSize(){
         return size;
     }
+    public abstract int count(int field,String value);
+    
+    public abstract E[] getValuesArray();
+    public abstract Stack<E> getValuesStack();
+    public abstract JoinTree<E> buildJoinTree(int leftSize);
     
 }
